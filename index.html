@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #165cad;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #inputText {
+            width: 300px;
+            height: 40px;
+            padding: 0 10px;
+            border: none;
+            border-bottom: 2px solid #fff;
+            outline: none;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: #fff;
+            color: #002c40;
+            border-radius: 15px;
+        }
+
+        #addToDo {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        #addToDo:hover {
+            background-color: #45a049;
+        }
+
+        #clearToDo {
+            background-color: tomato;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        #clearToDo:hover {
+            background-color: #ff5f5f;
+        }
+
+        .to-dos {
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .to-dos p {
+            background-color: #fff;
+            color: #333;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .to-dos p:hover {
+            background-color: #f0f0f0;
+            color: tomato;
+        }
+
+        .to-dos p.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .to-dos p.completed:hover {
+            color: tomato;
+        }
+
+        i {
+            color: #002c40;
+            padding-right: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>ToDo List</h1>
+        <div class="input-container">
+            <input type="text" id="inputText" placeholder="Add a new task...">
+            <button id="addToDo"><i class="fas fa-plus"></i> Add Task</button>
+            <button id="clearToDo"><i class="fas fa-trash-alt"></i> Clear All</button>
+        </div>
+        <div class="to-dos" id="toDoContainer"></div>
+    </div>
+
+    <script>
+        let addToDoButton = document.getElementById("addToDo");
+        let toDoContainer = document.getElementById("toDoContainer");
+        let inputText = document.getElementById("inputText");
+        let clearToDo = document.getElementById("clearToDo");
+
+        let savedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+
+        savedTodos.forEach(todo => {
+            addTodoElement(todo);
+        });
+
+        addToDoButton.addEventListener("click", function () {
+            let todoText = inputText.value.trim();
+            if (todoText !== "") {
+                addTodoElement(todoText);
+                savedTodos.push(todoText);
+                localStorage.setItem("todos", JSON.stringify(savedTodos));
+                inputText.value = "";
+            }
+        });
+
+        inputText.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                addToDoButton.click();
+            }
+        });
+
+        clearToDo.addEventListener("click", function () {
+            toDoContainer.innerHTML = "";
+            savedTodos = [];
+            localStorage.setItem("todos", JSON.stringify(savedTodos));
+        });
+
+        function addTodoElement(todoText) {
+            let paragraph = document.createElement("p");
+            paragraph.textContent = todoText;
+            toDoContainer.appendChild(paragraph);
+
+            paragraph.addEventListener("click", function () {
+                paragraph.classList.toggle("completed");
+            });
+
+            paragraph.addEventListener("dblclick", function () {
+                toDoContainer.removeChild(paragraph);
+                savedTodos = savedTodos.filter(savedTodo => savedTodo !== todoText);
+                localStorage.setItem("todos", JSON.stringify(savedTodos));
+            });
+        }
+    </script>
+</body>
+
+</html>
